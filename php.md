@@ -75,6 +75,36 @@ Install and run PHP Coding Standards Fixer:
     $ compser require --dev friendsofphp/php-cs-fixer
     $ vendor/bin/php-cs-fixer fix --rules=@PSR1 hello.php
 
+Use dependencies installed with composer in PHP code:
+
+```php
+<?php
+require 'vendor/autoload.php'
+```
+
+Install current dependencies from `composer.lock`:
+
+    $ composer install
+
+Update dependencies in `coposer.lock`:
+
+    $ composer update
+
+Use with `global` parameter to manage packages globally for the current user
+(`~/composer`).
+
+# Date and Time
+
+```php
+$input = '24.06.1987';
+$birthday = DateTime::createFromFormat('d.m.Y', $input);
+
+$output = $birthday->format('Y-m-d');
+echo($output); # 1987-06-24
+```
+
+TODO: continue here https://phptherightway.com/#date_and_time
+
 # Links
 
 - Coding Standards and Best Practices
