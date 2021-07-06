@@ -95,15 +95,66 @@ Use with `global` parameter to manage packages globally for the current user
 
 # Date and Time
 
-```php
-$input = '24.06.1987';
-$birthday = DateTime::createFromFormat('d.m.Y', $input);
+Parse and format dates:
 
-$output = $birthday->format('Y-m-d');
-echo($output); # 1987-06-24
+```php
+$eu_date = '24.06.1987';
+$date = DateTime::createFromFormat('d.m.Y', $eu_date);
+$us_date = $date->format('Y-m-d');
+echo($us_date . PHP_EOL);
 ```
 
-TODO: continue here https://phptherightway.com/#date_and_time
+Deal with date differences:
+
+```php
+<?php
+
+$start = DateTime::createFromFormat('Y-m-d', '1970-01-01');
+$later = clone $start;
+
+// add a Period (P) of 12 years (12Y), 5 months (5M) and 3 days (3D)
+$later->add(new DateInterval('P12Y5M3D')); // changes date in-place!
+echo($later->format('Y-m-d') . PHP_EOL);
+
+$diff = $later->diff($start);
+echo($diff->format('is %y years, %m months, %d days (total: %a days) later') . PHP_EOL);
+
+if ($later > $start) {
+    echo($later->format('Y-m-d') . ' is later than ' . $start->format('Y-m-d'));
+}
+```
+
+Iterate over dates by an interval:
+
+```php
+<?php
+
+$start = DateTime::createFromFormat('Y-m-d', '2020-01-01');
+$later = DateTime::createFromFormat('Y-m-d', '2020-02-01');
+$periodInterval = DateInterval::createFromDateString('first thursday');
+$periodIterator = new DatePeriod($start, $periodInterval, $later, DatePeriod::EXCLUDE_START_DATE);
+foreach ($periodIterator as $date) {
+    echo($date->format('Y-m-d') . PHP_EOL);
+}
+```
+
+# Unicode
+
+- Use `mb_`-prefixed counterpart of string functions when dealing with unicode:
+  `mb_strpos()` instead of `strpos()`, `mb_strlen()` instead of `strlen()`.
+  (`mb` stands for "multi-byte", see [Multibyte String
+  Functions](https://www.php.net/ref.mbstring)).
+- Call the `mb_internal_encoding()` at the top of every script (or in the global
+  include script, respectively) and the `mb_http_output()` function right after
+  that if outputting to a browser.
+- If a function has an optional encoding parameter, pass `'UTF-8'` as an
+  argument.
+- Use the `utf8mb4` character set, (_not_ just `utf8`) in the PDO connection
+  string when dealing with MySQL databases.
+- Call `header('Content-Type: text/html; charset=UTF-8');` to tell the browser
+  about UTF-8 encoding to be expected.
+
+  Continue here: `https://phptherightway.com/#i18n_l10n`
 
 # Links
 
@@ -113,6 +164,7 @@ TODO: continue here https://phptherightway.com/#date_and_time
     - [PSR-12: Extended Coding Style](https://www.php-fig.org/psr/psr-12/)
     - [PSR-4: Autoloader](https://www.php-fig.org/psr/psr-4/)
     - [Clean Code PHP](https://github.com/jupeter/clean-code-php)
+    - [Design Patterns](https://designpatternsphp.readthedocs.io/en/latest/README.html)
 - Packaging
     - [Composer](https://getcomposer.org/)
     - [Packagist](https://packagist.org/)
